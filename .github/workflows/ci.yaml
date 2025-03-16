@@ -52,7 +52,7 @@ jobs:
         run: |
           SHORT_SHA=$(git rev-parse --short HEAD)
           echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
-          echo "LAMBDA_ZIP_NAME=aws-cost-reporter-lambda-${{ env.SHORT_SHA }}.zip" >> $GITHUB_ENV
+          echo "LAMBDA_ZIP_NAME=aws-cost-reporter-lambda-$SHORT_SHA.zip" >> $GITHUB_ENV
           echo "LAMBDA_BUILD_DIR=$GITHUB_WORKSPACE/build-dir" >> $GITHUB_ENV
           echo "LAMBDA_BUILD_OUTPUT_DIR=$GITHUB_WORKSPACE/build-output" >> $GITHUB_ENV
 
@@ -63,7 +63,6 @@ jobs:
         run: zip -r9 "${{ env.LAMBDA_BUILD_OUTPUT_DIR }}/${{ env.LAMBDA_ZIP_NAME }}" .
         working-directory: ${{ env.LAMBDA_BUILD_DIR }}
 
-      - run: echo hello > path/to/artifact/world.txt
       - uses: actions/upload-artifact@v4
         with:
           name: aws-cost-reporter-lambda-${{ env.SHORT_SHA }}
