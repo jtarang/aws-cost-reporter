@@ -27,14 +27,13 @@ jobs:
       - name: Clean up previous artifact directory
         run: rm -rf ${{ env.LAMBDA_ARTIFACT_DIR }} && mkdir -p ${{ env.LAMBDA_ARTIFACT_DIR }}
 
-      - name: Sleep to give the artifact upload time
-        run: sleep 60
-
       - name: Download Build Artifact
         uses: actions/download-artifact@v4
         with:
           name: ${{ env.LAMBDA_ARTIFACT_NAME }}
           path: ${{ env.LAMBDA_ARTIFACT_DIR }}
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
 
       - name: Clean up
         run: rm -rf ${{ env.LAMBDA_ARTIFACT_DIR }}
