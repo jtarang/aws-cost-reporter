@@ -9,7 +9,6 @@ SLACK_WEBHOOK_URL = os.environ['SLACK_WEBHOOK_URL']
 
 def handler(event, context):
     ce_client = boto3.client('ce')
-    tagging_client = boto3.client('resourcegroupstaggingapi')
 
     # Define default values from environment variables
     tag_key = os.environ['AWS_COST_TARGET_TAG']
