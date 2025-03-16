@@ -1,0 +1,38 @@
+name: ACR CD Pipeline
+
+
+on:
+  workflow_dispatch: {}
+  workflow_run:
+    workflows: ["ACR CI Pipeline"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    name: Deploy Package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Extract Git commit hash and Set Variables
+        id: version
+        run: |
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
+          echo "LAMBDA_ARTIFACT_NAME=aws-cost-reporter-lambda-$SHORT_SHA.zip" >> $GITHUB_ENV
+          echo "LAMBDA_ARTIFACT_DIR=$GITHUB_WORKSPACE/artifact" >> $GITHUB_ENV
+
+      - name: Clean up previous artifact directory
+        run: rm -rf ${{ env.LAMBDA_ARTIFACT_DIR }}
+
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.LAMBDA_ARTIFACT_NAME }}
+          path: ${{ env.LAMBDA_ARTIFACT_DIR }}
+
+      - name: Clean up
+        run: rm -rf ${{ env.LAMBDA_ARTIFACT_DIR }}
