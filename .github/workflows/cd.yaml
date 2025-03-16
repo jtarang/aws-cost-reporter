@@ -25,7 +25,7 @@ jobs:
           echo "LAMBDA_ARTIFACT_DIR=$GITHUB_WORKSPACE/artifact" >> $GITHUB_ENV
 
       - name: Clean up previous artifact directory
-        run: rm -rf ${{ env.LAMBDA_ARTIFACT_DIR }}
+        run: rm -rf ${{ env.LAMBDA_ARTIFACT_DIR }} && mkdir -p ${{ env.LAMBDA_ARTIFACT_DIR }}
 
       - name: Download Build Artifact
         uses: actions/download-artifact@v4
