@@ -57,7 +57,7 @@ jobs:
           echo "LAMBDA_BUILD_OUTPUT_DIR=$GITHUB_WORKSPACE/build-output" >> $GITHUB_ENV
 
       - name: Install dependencies
-        run: uv venv && uv pip install --target ${{ env.LAMBDA_BUILD_DIR }}} .
+        run: uv venv && uv pip install --target ${{ env.LAMBDA_BUILD_DIR }} .
 
       - name: Build Package
         run: mkdir -p ${{ env.LAMBDA_BUILD_OUTPUT_DIR }} && zip -r9 "${{ env.LAMBDA_BUILD_OUTPUT_DIR }}/${{ env.LAMBDA_ZIP_NAME }}" .
