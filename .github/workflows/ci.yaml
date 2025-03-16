@@ -60,7 +60,7 @@ jobs:
         run: uv venv && uv pip install --target ${{ env.LAMBDA_BUILD_DIR }}} .
 
       - name: Build Package
-        run: zip -r9 "${{ env.LAMBDA_BUILD_OUTPUT_DIR }}/${{ env.LAMBDA_ZIP_NAME }}" .
+        run: mkdir -p ${{ env.LAMBDA_BUILD_OUTPUT_DIR }} && zip -r9 "${{ env.LAMBDA_BUILD_OUTPUT_DIR }}/${{ env.LAMBDA_ZIP_NAME }}" .
         working-directory: ${{ env.LAMBDA_BUILD_DIR }}
 
       - uses: actions/upload-artifact@v4
