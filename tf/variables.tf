@@ -2,6 +2,11 @@ variable "aws_region" {
   description = "AWS region"
 }
 
+variable "aws_profile_name" {
+  description = "The name of the AWS profile to use for authentication"
+  type        = string
+}
+
 variable "lambda_function_name" {
   description = "Lambda Function Name"
   type = string

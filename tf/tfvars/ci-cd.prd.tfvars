@@ -1,6 +1,6 @@
 aws_region = "us-east-1"
 
-aws_profile_name = "devops-service-staging"
+aws_profile_name = ""
 
 # Tagging for resources
 tags = {
