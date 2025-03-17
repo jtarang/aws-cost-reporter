@@ -47,7 +47,7 @@ jobs:
           mkdir -p /tmp/tbot
           
           # Start the bot session using the bot token from GitHub secrets
-          nohup tbot start --token=${{ secrets.TELEPORT_BOT_TOKEN }} --dest=/tmp/tbot --proxy-server=${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443 --join-method=token &
+          nohup tbot start --destination-dir=/tmp/tbot --token=${{ secrets.TELEPORT_BOT_TOKEN }} --proxy-server=${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443 --join-method=token &
 
           # Set up Teleport credentials
           export TELEPORT_CERTIFICATE="/tmp/tbot/key-cert.pub"  # Public certificate
