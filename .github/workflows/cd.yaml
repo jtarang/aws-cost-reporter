@@ -47,7 +47,8 @@ jobs:
           mkdir -p /tmp/tbot
           
           # Start the bot session using the bot token from GitHub secrets
-          nohup TELEPORT_ANONYMOUS_TELEMETRY=1 tbot start --destination-dir=/tmp/tbot --token=${{ secrets.TELEPORT_BOT_TOKEN }} --proxy-server=${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443 --join-method=token &
+          export TELEPORT_ANONYMOUS_TELEMETRY=1 
+          tbot start --destination-dir=/tmp/tbot --token=${{ secrets.TELEPORT_BOT_TOKEN }} --proxy-server=${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443 --join-method=token >> /dev/null &
 
           # Set up Teleport credentials
           export TELEPORT_CERTIFICATE="/tmp/tbot/key-cert.pub"  # Public certificate
@@ -59,7 +60,7 @@ jobs:
           export TRUST_ANCHOR_ARN="${{ secrets.AWS_WORKLOAD_TRUST_ANCHOR_ARN }}"
           export ROLE_ARN="${{ secrets.AWS_WORKLOAD_ROLE_ARN }}"
 
-          curl https://rolesanywhere.amazonaws.com/releases/1.4.0/Aarch64/Linux/aws_signing_helper --output /tmp/aws_signing_helper
+          curl https://rolesanywhere.amazonaws.com/releases/1.4.0/X86_64/Linux/aws_signing_helper --output /tmp/aws_signing_helper
           chmod +x /tmp/aws_signing_helper
           # Generate AWS credentials using the Teleport identity
           /tmp/aws_signing_helper credential-process \
