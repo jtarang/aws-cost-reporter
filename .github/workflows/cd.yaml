@@ -82,11 +82,11 @@ jobs:
 
       - name: Terraform Plan
         run: |
-          terraform plan --var-file=$GITHUB_WORKSPACE/tfvars/${{ env.CI_CD_TFVARS }} -out="${{ TF_PLAN_PATH }}"
+          terraform plan --var-file=$GITHUB_WORKSPACE/tfvars/${{ env.CI_CD_TFVARS }} -out="${{ env.TF_PLAN_PATH }}"
 
       - name: Terraform Apply
         run: |
-          terraform apply -auto-approve "${{ TF_PLAN_PATH }}"
+          terraform apply -auto-approve "${{ env.TF_PLAN_PATH }}"
 
 
       - name: Clean up
