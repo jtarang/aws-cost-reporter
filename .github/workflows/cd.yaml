@@ -48,7 +48,7 @@ jobs:
           
           # Start the bot session using the bot token from GitHub secrets
           export TELEPORT_ANONYMOUS_TELEMETRY=1 
-          tbot start --destination-dir=/tmp/tbot --token=${{ secrets.TELEPORT_BOT_TOKEN }} --proxy-server=${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443 --join-method=token >> /dev/null &
+          sudo tbot start --destination-dir=/tmp/tbot --token=${{ secrets.TELEPORT_BOT_TOKEN }} --proxy-server=${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443 --join-method=token >> /dev/null &
 
           # Set up Teleport credentials
           export TELEPORT_CERTIFICATE="/tmp/tbot/key-cert.pub"  # Public certificate
