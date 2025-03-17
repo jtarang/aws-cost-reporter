@@ -25,7 +25,7 @@ jobs:
           echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
           echo "LAMBDA_ARTIFACT_NAME=aws-cost-reporter-lambda-$SHORT_SHA" >> $GITHUB_ENV
           echo "LAMBDA_ARTIFACT_DIR=$GITHUB_WORKSPACE/artifact" >> $GITHUB_ENV
-          echo "TF_PLAN_PATH=$GITHUB_WORKSPACE/plans/${{GITHUB_RUN_ID}}-${{ env.SHORT_SHA }}.tfplan" >> $GITHUB_ENV
+          echo "TF_PLAN_PATH=$GITHUB_WORKSPACE/plans/$GITHUB_RUN_ID-${{ env.SHORT_SHA }}.tfplan" >> $GITHUB_ENV
 
       - name: Clean up previous artifact directory
         run: rm -rf ${{ env.LAMBDA_ARTIFACT_DIR }} /tmp/tbot /tmp/aws_creds.json && mkdir -p ${{ env.LAMBDA_ARTIFACT_DIR }}
