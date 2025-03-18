@@ -85,7 +85,7 @@ jobs:
                 type: directory
                 path: /tmp/tbot
               selector:
-                name: ${{ secrets.TELEPORT_WORKLOAD_ID_NAME_SELECTOR }}
+                name: ${{ secrets.TELEPORT_WORKLOAD_IDENTITY }}
           EOF
 
 
