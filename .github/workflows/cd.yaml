@@ -123,12 +123,11 @@ jobs:
         run: |
           export TF_VAR_slack_webhook_url="${{ secrets.SLACK_WEBHOOK_URL }}"
           cd ${{ env.TF_PATH }} && terraform plan --var-file=$GITHUB_WORKSPACE/tf/tfvars/${{ secrets.CI_CD_TFVARS }} -out="${{ env.TF_PLAN_PATH }}"
-#
-#      - name: Terraform Apply
-#        run: |
-#          # terraform apply -auto-approve "${{ env.TF_PLAN_PATH }}"
-#           echo "Don't enable apply yet"
-#
+
+      - name: Terraform Apply
+        run: |
+          terraform apply -auto-approve "${{ env.TF_PLAN_PATH }}"
+
       - name: Clean up
         if: always()
         run: pkill tbot || true && rm -rf ${{ env.LAMBDA_ARTIFACT_DIR }} /tmp/tbot /tmp/bot-config.yaml
