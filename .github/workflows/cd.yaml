@@ -73,8 +73,6 @@ jobs:
           debug: false
           auth_server: ${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443
           oneshot: true
-          credential_ttl: 5m
-          renewal_interval: 2m
           fips: false
           outputs:
             - type: workload-identity-x509
@@ -90,7 +88,7 @@ jobs:
       - name: Get Teleport Status and Start Workload Identity
         run: |
           export TELEPORT_ANONYMOUS_TELEMETRY=1 
-          tbot start -c /tmp/bot-config.yaml
+          tbot start -c /tmp/bot-config.yaml --credential_ttl=5m --renewal_interval=3m
 
       - name: Generate AWS Credentials using Workload Identity
         run: |
