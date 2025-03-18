@@ -31,7 +31,7 @@ jobs:
           echo "TELEPORT_CLUSTER_VERSION=$(curl https://${{ secrets.TELEPORT_CLUSTER_DOMAIN }}/v1/webapi/automaticupgrades/channel/default/version | sed 's/v//')" >> $GITHUB_ENV
 
       - name: Clean up previous artifact directory
-        run: rm -rf ${{ env.LAMBDA_ARTIFACT_DIR }} /tmp/tbot /tmp/aws_creds.json && mkdir -p ${{ env.LAMBDA_ARTIFACT_DIR }}
+        run: rm -rf ${{ env.LAMBDA_ARTIFACT_DIR }} /tmp/tbot && mkdir -p ${{ env.LAMBDA_ARTIFACT_DIR }}
 
       - name: Download Build Artifact
         uses: actions/download-artifact@v4
@@ -55,9 +55,8 @@ jobs:
           certificate-ttl: 10m
           anonymous-telemetry: 1
 
-      - name: Get Teleport Status
-        #run: tsh status && tsh workload-identity issue-x509 --name-selector ${{ secrets.TELEPORT_WORKLOAD_ID_NAME_SELECTOR }} --credential-ttl 10m --output /tmp/tbot
-        run: tsh status && pkill tbot || true && tsh workload-identity issue-x509 --name-selector devops-service-workload-identity --credential-ttl 10m --output /tmp/tbot
+      - name: Get Teleport Status and Start Workload Identity
+        run: tsh status && tbot start workload-identity-x509 --destination /tmp/tbot   --name-selector ${{ secrets.TELEPORT_WORKLOAD_ID_NAME_SELECTOR }} --proxy-server ${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443 --join-method github
 
       - name: Generate AWS Credentials using Workload Identity
         run: |
