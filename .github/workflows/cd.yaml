@@ -60,7 +60,11 @@ jobs:
           export TELEPORT_ANONYMOUS_TELEMETRY=1 
           tsh status
           sleep 5
-          tbot start workload-identity-x509 --proxy-server "${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443" --auth-server "${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443" --join-method github --destination /tmp/workload-id --name-selector ${{ secrets.TELEPORT_WORKLOAD_ID_NAME_SELECTOR }}
+          echo ${{ secrets.TBOT_CONFIG }} >> /tmp/bot-config.yaml
+          echo $TELEPORT_PROXY_SERVER
+          echo $TELEPORT_AUTH_SERVER
+          #tbot start -c /tmp/bot-config.yaml --proxy-server $TELEPORT_PROXY_SERVER
+          tbot start workload-identity-x509 --proxy-server $TELEPORT_PROXY_SERVER --join-method github --destination /tmp/workload-id --name-selector ${{ secrets.TELEPORT_WORKLOAD_ID_NAME_SELECTOR }}
 
       - name: Generate AWS Credentials using Workload Identity
         run: |
@@ -99,4 +103,4 @@ jobs:
 #
       - name: Clean up
         if: always()
-        run: pkill tbot || true && rm -rf ${{ env.LAMBDA_ARTIFACT_DIR }} /tmp/tbot
+        run: pkill tbot || true && rm -rf ${{ env.LAMBDA_ARTIFACT_DIR }} /tmp/tbot /tmp/bot-config.yaml
