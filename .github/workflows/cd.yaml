@@ -49,8 +49,8 @@ jobs:
         uses: teleport-actions/auth@v2
         with:
           proxy: ${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443
-          token: example-bot
-          certificate-ttl: 30
+          token: ${{ secrets.TELEPORT_BOT_TOKEN }}
+          certificate-ttl: 30m
           anonymous-telemetry: 1
 
       - name: Get Teleport Status
