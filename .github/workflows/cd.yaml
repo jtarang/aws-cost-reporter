@@ -31,7 +31,7 @@ jobs:
           echo "TELEPORT_CLUSTER_VERSION=$(curl https://${{ secrets.TELEPORT_CLUSTER_DOMAIN }}/v1/webapi/automaticupgrades/channel/default/version | sed 's/v//')" >> $GITHUB_ENV
 
       - name: Clean up previous artifact directory
-        run: rm -rf ${{ env.LAMBDA_ARTIFACT_DIR }} /tmp/tbot && mkdir -p ${{ env.LAMBDA_ARTIFACT_DIR }}
+        run: rm -rf ${{ env.LAMBDA_ARTIFACT_DIR }} /tmp/tbot /tmp/bot-config.yaml && mkdir -p ${{ env.LAMBDA_ARTIFACT_DIR }}
 
       - name: Download Build Artifact
         uses: actions/download-artifact@v4
@@ -46,21 +46,56 @@ jobs:
         with:
           version: ${{ env.TELEPORT_CLUSTER_VERSION }}
 
-      - name: Fetch credentials using Machine ID
-        id: auth
-        uses: teleport-actions/auth@v2
-        with:
-          proxy: ${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443
-          token: ${{ secrets.TELEPORT_BOT_TOKEN }}
-          certificate-ttl: 10m
-          anonymous-telemetry: 1
+#      - name: Fetch credentials using Machine ID
+#        id: auth
+#        uses: teleport-actions/auth@v2
+#        with:
+#          proxy: ${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443
+#          token: ${{ secrets.TELEPORT_BOT_TOKEN }}
+#          certificate-ttl: 10m
+#          anonymous-telemetry: 1
+
+      - name: Write tbot config
+        run: |
+          cat <<EOF > /tmp/bot-config.yaml
+          version: v2
+          onboarding:
+            join_method: github
+          storage:
+            type: directory
+            path: /tmp/tbot
+            symlinks: try-secure
+            acls: "off"
+          services:
+            - type: identity
+              destination:
+                type: directory
+                path: /tmp/tbot
+                symlinks: try-secure
+                acls: "off"
+              ssh_config: "on"
+          debug: false
+          auth_server: "${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443"
+          credential_ttl: 10m
+          renewal_interval: 5m
+          oneshot: true
+          fips: false
+          outputs:
+            - type: workload-identity-x509
+              destination:
+                type: directory
+                path: /tmp/tbot
+              selector:
+                name: ${{ secrets.TELEPORT_WORKLOAD_ID_NAME_SELECTOR }}
+          EOF
+
+
 
       - name: Get Teleport Status and Start Workload Identity
         run: |
           export TELEPORT_ANONYMOUS_TELEMETRY=1 
           tsh status
-          sleep 5
-          tbot start workload-identity-x509 --proxy-server ${{ secrets.TELEPORT_CLUSTER_DOMAIN}}:443 --join-method github --destination /tmp/workload-id --name-selector ${{ secrets.TELEPORT_WORKLOAD_ID_NAME_SELECTOR }}
+          tbot start -c /tmp/bot-config.yaml
 
       - name: Generate AWS Credentials using Workload Identity
         run: |
