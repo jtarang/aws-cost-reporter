@@ -88,7 +88,7 @@ jobs:
       - name: Get Teleport Status and Start Workload Identity
         run: |
           export TELEPORT_ANONYMOUS_TELEMETRY=1 
-          tbot start -c /tmp/bot-config.yaml --credential_ttl=5m --renewal_interval=3m
+          tbot start -c /tmp/bot-config.yaml --credential-ttl=30m --renewal-interval=5m
 
       - name: Generate AWS Credentials using Workload Identity
         run: |
