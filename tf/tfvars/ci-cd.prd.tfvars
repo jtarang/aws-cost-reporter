@@ -13,7 +13,6 @@ tags = {
 lambda_function_name = "jasmit-cost-report-lambda-function"
 lambda_role_name = "jasmit-lambda-cost-role"
 lambda_handler = "aws_cost_report_lambda.handler"
-lambda_file_path = "../build-output-dir/aws_cost_reporter_lambda.zip"
 lambda_memory_size = 128
 lambda_timeout = 30
 lambda_runtime = "python3.13"
