@@ -27,7 +27,7 @@ jobs:
           echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
           echo "LAMBDA_ARTIFACT_NAME=aws-cost-reporter-lambda-${GITHUB_SHA::7}" >> $GITHUB_ENV
           echo "LAMBDA_ARTIFACT_DIR=$GITHUB_WORKSPACE/artifact" >> $GITHUB_ENV
-          echo "TF_PLAN_PATH=$GITHUB_WORKSPACE/plans/$GITHUB_RUN_ID-${GITHUB_SHA::7}.tfplan" >> $GITHUB_ENV
+          echo "TF_PLAN_PATH=$GITHUB_WORKSPACE/tf/plans/$GITHUB_RUN_ID-${GITHUB_SHA::7}.tfplan" >> $GITHUB_ENV
           echo "TELEPORT_CLUSTER_VERSION=$(curl https://${{ secrets.TELEPORT_CLUSTER_DOMAIN }}/v1/webapi/automaticupgrades/channel/default/version | sed 's/v//')" >> $GITHUB_ENV
 
       - name: Clean up previous artifact directory
@@ -129,7 +129,7 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: |
-          terraform plan --var-file=$GITHUB_WORKSPACE/tfvars/${{ secrets.CI_CD_TFVARS }} -out="${{ env.TF_PLAN_PATH }}"
+          terraform plan --var-file=$GITHUB_WORKSPACE/tf/tfvars/${{ secrets.CI_CD_TFVARS }} -out="${{ env.TF_PLAN_PATH }}"
 #
 #      - name: Terraform Apply
 #        run: |
