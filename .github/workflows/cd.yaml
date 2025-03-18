@@ -99,7 +99,7 @@ jobs:
         run: |
 
           curl https://rolesanywhere.amazonaws.com/releases/1.4.0/X86_64/Linux/aws_signing_helper --output /tmp/tbot/aws_signing_helper
-          chmod +x /tmp/aws_signing_helper
+          chmod +x /tmp/tbot/aws_signing_helper
           # Generate AWS credentials using the Teleport identity
           /tmp/tbot/aws_signing_helper credential-process \
             --certificate /tmp/tbot/svid.pem \
