@@ -77,8 +77,6 @@ jobs:
               ssh_config: "on"
           debug: false
           auth_server: ${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443
-          credential_ttl: 10m
-          renewal_interval: 5m
           oneshot: true
           fips: false
           outputs:
