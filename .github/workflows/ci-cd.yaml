@@ -72,6 +72,7 @@ jobs:
     if: github.ref == 'refs/heads/main' # Deploy only on the main branch
     permissions:
       id-token: write
+      actions: read
       contents: read  # Access to the repository contents (e.g., checkouts, fetching)
       pull-requests: write  # If the CD pipeline interacts with PRs
 
