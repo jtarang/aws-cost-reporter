@@ -117,11 +117,16 @@ jobs:
           echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> $GITHUB_ENV
           echo "AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}" >> $GITHUB_ENV
 
+      - name: Install Terraform
+      - uses: hashicorp/setup-terraform@v3
+
       - name: Terraform Init
+        id: init
         run: |
           terraform init
 
       - name: Terraform Plan
+        id: plan
         run: |
           terraform plan --var-file=$GITHUB_WORKSPACE/tfvars/${{ env.CI_CD_TFVARS }} -out="${{ env.TF_PLAN_PATH }}"
 #
