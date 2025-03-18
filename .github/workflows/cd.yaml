@@ -125,6 +125,7 @@ jobs:
           cd ${{ env.TF_PATH }} && terraform plan --var-file=$GITHUB_WORKSPACE/tf/tfvars/${{ secrets.CI_CD_TFVARS }} -out="${{ env.TF_PLAN_PATH }}"
 
       - name: Terraform Apply
+        id: apply
         run: |
           terraform apply -auto-approve "${{ env.TF_PLAN_PATH }}"
 
