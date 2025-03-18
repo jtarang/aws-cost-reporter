@@ -59,9 +59,8 @@ jobs:
         run: |
           export TELEPORT_ANONYMOUS_TELEMETRY=1 
           tsh status
-          pkill -f tbot 
           sleep 5
-          tbot start workload-identity-x509 --proxy-server "${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443" --join-method github --destination /tmp/workload-id --name-selector ${{ secrets.TELEPORT_WORKLOAD_ID_NAME_SELECTOR }}
+          tbot start workload-identity-x509 --proxy-server "${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443" --auth-server "${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443" --join-method github --destination /tmp/workload-id --name-selector ${{ secrets.TELEPORT_WORKLOAD_ID_NAME_SELECTOR }}
 
       - name: Generate AWS Credentials using Workload Identity
         run: |
