@@ -100,14 +100,24 @@ jobs:
             --trust-anchor-arn "${{ secrets.AWS_WORKLOAD_TRUST_ANCHOR_ARN }}" \
             --role-arn "${{ secrets.AWS_WORKLOAD_ROLE_ARN }}" > /tmp/tbot/aws_creds.json
 
-      - name: Export AWS Credentials
+      - name: Generate AWS Credentials
+        id: generate_creds
         run: |
-          export AWS_ACCESS_KEY_ID=$(jq -r '.AccessKeyId' /tmp/tbot/aws_creds.json)
-          export AWS_SECRET_ACCESS_KEY=$(jq -r '.SecretAccessKey' /tmp/tbot/aws_creds.json)
-          export AWS_SESSION_TOKEN=$(jq -r '.SessionToken' /tmp/tbot/aws_creds.json)
-          echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> $GITHUB_ENV
-          echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> $GITHUB_ENV
-          echo "AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}" >> $GITHUB_ENV
+          # Assuming the AWS credentials are generated and saved in /tmp/tbot/aws_creds.json
+          AWS_ACCESS_KEY_ID=$(jq -r '.AccessKeyId' /tmp/tbot/aws_creds.json)
+          AWS_SECRET_ACCESS_KEY=$(jq -r '.SecretAccessKey' /tmp/tbot/aws_creds.json)
+          AWS_SESSION_TOKEN=$(jq -r '.SessionToken' /tmp/tbot/aws_creds.json)
+
+          # Setting them as environment variables directly for later steps
+          echo "AWS credentials generated."
+
+      - name: Set up AWS credentials for Terraform
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region : ${{ secrets.DEFAULT_AWS_REGION }}
+          aws-access-key-id: ${{ steps.generate_creds.outputs.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ steps.generate_creds.outputs.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ steps.generate_creds.outputs.AWS_SESSION_TOKEN }}
 
       - name: Install Terraform
         id: install-terraform
