@@ -61,6 +61,7 @@ jobs:
           version: v2
           onboarding:
             join_method: github
+            token: ${{ secrets.TELEPORT_BOT_TOKEN }}
           storage:
             type: directory
             path: /tmp/tbot
@@ -75,7 +76,7 @@ jobs:
                 acls: "off"
               ssh_config: "on"
           debug: false
-          auth_server: "${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443"
+          auth_server: ${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443
           credential_ttl: 10m
           renewal_interval: 5m
           oneshot: true
