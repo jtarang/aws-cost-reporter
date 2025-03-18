@@ -52,61 +52,47 @@ jobs:
         with:
           proxy: ${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443
           token: ${{ secrets.TELEPORT_BOT_TOKEN }}
-          certificate-ttl: 30m
+          certificate-ttl: 10m
           anonymous-telemetry: 1
 
       - name: Get Teleport Status
-        run: tsh status
+        run: tsh status && tsh workload-identity issue-x509 --name-selector ${{ env.TELEPORT_WORKLOAD_ID_NAME_SELECTOR }} --credential-ttl 10m --output /tmp/tbot
 
-#      - name: Authenticate with Teleport Bot
-#        run: |
-#          mkdir -p /tmp/tbot
-#
-#          # Start the bot session using the bot token from GitHub secrets
-#          export TELEPORT_ANONYMOUS_TELEMETRY=1
-#          sudo tbot start --destination-dir=/tmp/tbot --token=${{ secrets.TELEPORT_BOT_TOKEN }} --proxy-server=${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443 --join-method=token >> /dev/null &
-#
-#          # Set up Teleport credentials
-#          export TELEPORT_CERTIFICATE="/tmp/tbot/key-cert.pub"  # Public certificate
-#          export TELEPORT_PRIVATE_KEY="/tmp/tbot/key"  # Private key
-#
-#      - name: Generate AWS Credentials using SPIFFE & Roles Anywhere
-#        run: |
-#          export PROFILE_ARN="${{ secrets.AWS_WORKLOAD_PROFILE_ARN }}"
-#          export TRUST_ANCHOR_ARN="${{ secrets.AWS_WORKLOAD_TRUST_ANCHOR_ARN }}"
-#          export ROLE_ARN="${{ secrets.AWS_WORKLOAD_ROLE_ARN }}"
-#
-#          curl https://rolesanywhere.amazonaws.com/releases/1.4.0/X86_64/Linux/aws_signing_helper --output /tmp/aws_signing_helper
-#          chmod +x /tmp/aws_signing_helper
-#          # Generate AWS credentials using the Teleport identity
-#          /tmp/aws_signing_helper credential-process \
-#            --certificate ${TELEPORT_CERTIFICATE} \
-#            --private-key ${TELEPORT_PRIVATE_KEY} \
-#            --profile-arn ${PROFILE_ARN} \
-#            --trust-anchor-arn ${TRUST_ANCHOR_ARN} \
-#            --role-arn ${ROLE_ARN} > /tmp/aws_creds.json
-#
-#      - name: Export AWS Credentials
-#        run: |
-#          export AWS_ACCESS_KEY_ID=$(jq -r '.AccessKeyId' /tmp/aws_creds.json)
-#          export AWS_SECRET_ACCESS_KEY=$(jq -r '.SecretAccessKey' /tmp/aws_creds.json)
-#          export AWS_SESSION_TOKEN=$(jq -r '.SessionToken' /tmp/aws_creds.json)
-#          echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> $GITHUB_ENV
-#          echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> $GITHUB_ENV
-#          echo "AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}" >> $GITHUB_ENV
-#
-#      - name: Terraform Init
-#        run: |
-#          terraform init
-#
-#      - name: Terraform Plan
-#        run: |
-#          terraform plan --var-file=$GITHUB_WORKSPACE/tfvars/${{ env.CI_CD_TFVARS }} -out="${{ env.TF_PLAN_PATH }}"
+      - name: Generate AWS Credentials using Workload Identity
+        run: |
+
+          curl https://rolesanywhere.amazonaws.com/releases/1.4.0/X86_64/Linux/aws_signing_helper --output /tmp/tbot/aws_signing_helper
+          chmod +x /tmp/aws_signing_helper
+          # Generate AWS credentials using the Teleport identity
+          /tmp/tbot/aws_signing_helper credential-process \
+            --certificate /tmp/tbot/svid.pem \
+            --private-key /tmp/tbot/svid_key.pem \
+            --profile-arn "${{ secrets.AWS_WORKLOAD_PROFILE_ARN }}" \
+            --trust-anchor-arn "${{ secrets.AWS_WORKLOAD_TRUST_ANCHOR_ARN }}" \
+            --role-arn "${{ secrets.AWS_WORKLOAD_ROLE_ARN }}" > /tmp/tbot/aws_creds.json
+
+      - name: Export AWS Credentials
+        run: |
+          export AWS_ACCESS_KEY_ID=$(jq -r '.AccessKeyId' /tmp/tbot/aws_creds.json)
+          export AWS_SECRET_ACCESS_KEY=$(jq -r '.SecretAccessKey' /tmp/tbot/aws_creds.json)
+          export AWS_SESSION_TOKEN=$(jq -r '.SessionToken' /tmp/tbot/aws_creds.json)
+          echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> $GITHUB_ENV
+          echo "AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}" >> $GITHUB_ENV
+
+      - name: Terraform Init
+        run: |
+          terraform init
+
+      - name: Terraform Plan
+        run: |
+          terraform plan --var-file=$GITHUB_WORKSPACE/tfvars/${{ env.CI_CD_TFVARS }} -out="${{ env.TF_PLAN_PATH }}"
 #
 #      - name: Terraform Apply
 #        run: |
 #          # terraform apply -auto-approve "${{ env.TF_PLAN_PATH }}"
 #           echo "Don't enable apply yet"
 #
-#      - name: Clean up
-#        run: rm -rf ${{ env.LAMBDA_ARTIFACT_DIR }} /tmp/tbot /tmp/aws_creds.json
+      - name: Clean up
+        if: always()
+        run: pkill tbot || true && rm -rf ${{ env.LAMBDA_ARTIFACT_DIR }} /tmp/tbot
