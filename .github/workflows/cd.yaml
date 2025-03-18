@@ -62,7 +62,7 @@ jobs:
           tsh status
           sleep 5
           echo ${{ secrets.TBOT_CONFIG }} >> /tmp/bot-config.yaml
-          tbot start -c /tmp/bot-config.yaml --proxy-server $TELEPORT_PROXY_SERVER
+          tbot start -c /tmp/bot-config.yaml --proxy-server ${{ env.TELEPORT_PROXY_SERVER }}
 
       - name: Generate AWS Credentials using Workload Identity
         run: |
