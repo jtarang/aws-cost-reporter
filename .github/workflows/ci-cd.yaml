@@ -102,8 +102,6 @@ jobs:
         with:
           name: ${{ env.LAMBDA_ZIP_NAME }}
           path: ${{ env.LAMBDA_ARTIFACT_DIR }}
-          run-id: ${{ github.event.workflow_run.id }}
-          github-token: ${{ github.token }}
 
       - name: Fetch Teleport binaries
         uses: teleport-actions/setup@v1
