@@ -61,8 +61,6 @@ jobs:
           tsh status
           sleep 5
           echo ${{ secrets.TBOT_CONFIG }} >> /tmp/bot-config.yaml
-          echo $TELEPORT_PROXY_SERVER
-          echo $TELEPORT_AUTH_SERVER
           #tbot start -c /tmp/bot-config.yaml --proxy-server $TELEPORT_PROXY_SERVER
           tbot start workload-identity-x509 --proxy-server $TELEPORT_PROXY_SERVER --join-method github --destination /tmp/workload-id --name-selector ${{ secrets.TELEPORT_WORKLOAD_ID_NAME_SELECTOR }}
 
