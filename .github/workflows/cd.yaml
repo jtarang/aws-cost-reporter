@@ -24,6 +24,7 @@ jobs:
       - name: Extract Git commit hash and Set Variables
         id: version
         run: |
+          echo "LAMBDA_ZIP_NAME=aws-cost-reporter-lambda-$GITHUB_SHA.zip" >> $GITHUB_ENV
           echo "LAMBDA_ARTIFACT_NAME=aws-cost-reporter-lambda-$GITHUB_SHA" >> $GITHUB_ENV
           echo "LAMBDA_ARTIFACT_DIR=$GITHUB_WORKSPACE/artifact" >> $GITHUB_ENV
           echo "TF_PATH=$GITHUB_WORKSPACE/tf/" >> $GITHUB_ENV
@@ -36,7 +37,7 @@ jobs:
       - name: Download Build Artifact
         uses: actions/download-artifact@v4
         with:
-          name: ${{ env.LAMBDA_ARTIFACT_NAME }}
+          name: ${{ env.LAMBDA_ZIP_NAME }}
           path: ${{ env.LAMBDA_ARTIFACT_DIR }}
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ github.token }}
@@ -115,7 +116,7 @@ jobs:
       - name: Terraform Init
         id: init
         run: |
-          export TF_VAR_lambda_file_path=${{ env.LAMBDA_ARTIFACT_DIR }}/${{ env.LAMBDA_ARTIFACT_NAME }}.zip
+          export TF_VAR_lambda_file_path=${{ env.LAMBDA_ARTIFACT_DIR }}/${{ env.LAMBDA_ZIP_NAME }}
           cd ${{ env.TF_PATH }} && terraform init
 
       - name: Terraform Plan

@@ -63,7 +63,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: aws-cost-reporter-lambda-$GITHUB_SHA
+          name: ${{ env.LAMBDA_ZIP_NAME }}
           overwrite: 'true'
           path: "${{ env.LAMBDA_BUILD_OUTPUT_DIR }}/${{ env.LAMBDA_ZIP_NAME }}"
           if-no-files-found: error
