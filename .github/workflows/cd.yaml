@@ -95,7 +95,6 @@ jobs:
       - name: Get Teleport Status and Start Workload Identity
         run: |
           export TELEPORT_ANONYMOUS_TELEMETRY=1 
-          tsh status
           tbot start -c /tmp/bot-config.yaml
 
       - name: Generate AWS Credentials using Workload Identity
