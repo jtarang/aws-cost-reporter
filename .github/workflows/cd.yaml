@@ -127,7 +127,8 @@ jobs:
       - name: Terraform Apply
         id: apply
         run: |
-          terraform apply -auto-approve "${{ env.TF_PLAN_PATH }}"
+          export TF_VAR_slack_webhook_url="${{ secrets.SLACK_WEBHOOK_URL }}"
+          cd ${{ env.TF_PATH }} && terraform apply -auto-approve "${{ env.TF_PLAN_PATH }}"
 
       - name: Clean up
         if: always()
