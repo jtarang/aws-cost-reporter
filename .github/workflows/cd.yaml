@@ -47,15 +47,6 @@ jobs:
         with:
           version: ${{ env.TELEPORT_CLUSTER_VERSION }}
 
-#      - name: Fetch credentials using Machine ID
-#        id: auth
-#        uses: teleport-actions/auth@v2
-#        with:
-#          proxy: ${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443
-#          token: ${{ secrets.TELEPORT_BOT_TOKEN }}
-#          certificate-ttl: 10m
-#          anonymous-telemetry: 1
-
       - name: Write tbot config
         run: |
           cat <<EOF > /tmp/bot-config.yaml

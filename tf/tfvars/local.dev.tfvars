@@ -10,7 +10,6 @@ tags = {
   "Environment"          = "Production"
 }
 
-
 lambda_function_name = "jasmit-cost-report-lambda-function"
 lambda_role_name = "jasmit-lambda-cost-role"
 lambda_handler = "aws_cost_report_lambda.handler"
