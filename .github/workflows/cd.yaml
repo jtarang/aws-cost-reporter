@@ -11,6 +11,8 @@ jobs:
   deploy:
     name: Deploy Package
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
 
     steps:
       - name: Checkout Repository
