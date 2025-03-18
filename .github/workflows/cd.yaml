@@ -56,7 +56,8 @@ jobs:
           anonymous-telemetry: 1
 
       - name: Get Teleport Status
-        run: tsh status && tsh workload-identity issue-x509 --name-selector ${{ secrets.TELEPORT_WORKLOAD_ID_NAME_SELECTOR }} --credential-ttl 10m --output /tmp/tbot
+        #run: tsh status && tsh workload-identity issue-x509 --name-selector ${{ secrets.TELEPORT_WORKLOAD_ID_NAME_SELECTOR }} --credential-ttl 10m --output /tmp/tbot
+        run: tsh status && tsh workload-identity issue-x509 --name-selector devops-service-workload-identity --credential-ttl 10m --output /tmp/tbot
 
       - name: Generate AWS Credentials using Workload Identity
         run: |
