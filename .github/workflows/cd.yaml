@@ -35,7 +35,7 @@ jobs:
           echo "TELEPORT_CLUSTER_VERSION=$(curl https://${{ secrets.TELEPORT_CLUSTER_DOMAIN }}/v1/webapi/automaticupgrades/channel/default/version | sed 's/v//')" >> $GITHUB_ENV
 
       - name: Clean up previous artifact directory
-        run: rm -rf ${{ env.LAMBDA_ARTIFACT_DIR }} /tmp/tbot /tmp/bot-config.yaml && mkdir -p ${{ env.LAMBDA_ARTIFACT_DIR }}
+        run: rm -rf ${{ env.LAMBDA_ARTIFACT_DIR }} /tmp/tbot /tmp/bot-config.yaml && mkdir -p ${{ env.LAMBDA_ARTIFACT_DIR }} ~/.aws
 
       - name: Download Build Artifact
         uses: actions/download-artifact@v4
@@ -106,13 +106,11 @@ jobs:
       - name: Get AWS credentials from JSON file
         id: aws-creds
         run: |
-          export AWS_ACCESS_KEY_ID=$(jq -r '.AccessKeyId' /tmp/tbot/aws_creds.json)
-          export AWS_SECRET_ACCESS_KEY=$(jq -r '.SecretAccessKey' /tmp/tbot/aws_creds.json)
-          export AWS_SESSION_TOKEN=$(jq -r '.SessionToken' /tmp/tbot/aws_creds.json)
-          
-          echo "::set-output name=aws_access_key_id::$AWS_ACCESS_KEY_ID"
-          echo "::set-output name=aws_secret_access_key::$AWS_SECRET_ACCESS_KEY"
-          echo "::set-output name=aws_session_token::$AWS_SESSION_TOKEN"
+          mkdir -p ~/.aws
+          echo "[default]" > ~/.aws/credentials
+          echo "aws_access_key_id =$(jq -r '.AccessKeyId' /tmp/tbot/aws_creds.json) >> ~/.aws/credentials
+          echo "aws_secret_access_key = =$(jq -r '.SecretAccessKey' /tmp/tbot/aws_creds.json) >> ~/.aws/credentials
+          echo "aws_session_token = $(jq -r '.SessionToken' /tmp/tbot/aws_creds.json) >> ~/.aws/credentials
 
       - name: Configure AWS credentials using aws-actions
         uses: aws-actions/configure-aws-credentials@v1
@@ -148,4 +146,4 @@ jobs:
 
       - name: Clean up
         if: always()
-        run: pkill tbot || true && rm -rf ${{ env.LAMBDA_ARTIFACT_DIR }} /tmp/tbot /tmp/bot-config.yaml
+        run: pkill tbot || true && rm -rf ${{ env.LAMBDA_ARTIFACT_DIR }} /tmp/tbot /tmp/bot-config.yaml ~/.aws
