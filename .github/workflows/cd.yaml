@@ -13,6 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
+      contents: read  # Access to the repository contents (e.g., checkouts, fetching)
+      pull-requests: write  # If the CD pipeline interacts with PRs
+
 
     steps:
       - name: Checkout Repository
