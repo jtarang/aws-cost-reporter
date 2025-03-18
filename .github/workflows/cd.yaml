@@ -59,7 +59,7 @@ jobs:
         run: |
           export TELEPORT_ANONYMOUS_TELEMETRY=1 
           tsh status
-          tbot start workload-identity-x509 --destination /tmp/tbot --name-selector ${{ secrets.TELEPORT_WORKLOAD_ID_NAME_SELECTOR }} --proxy-server "$TELEPORT_PROXY_SERVER:443" --join-method github
+          tbot start workload-identity-x509 --proxy-server "nebula-dash-staging.cloud.gravitational.io:443" --join-method github --destination /tmp/tbot --name-selector ${{ secrets.TELEPORT_WORKLOAD_ID_NAME_SELECTOR }}
         env:
           TELEPORT_PROXY_SERVER: ${{ secrets.TELEPORT_CLUSTER_DOMAIN }}
 
