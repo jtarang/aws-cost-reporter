@@ -169,14 +169,6 @@ jobs:
           echo "aws_session_token = $(jq -r '.SessionToken' /tmp/tbot/aws_creds.json)" >> ~/.aws/credentials
           chmod 600 ~/.aws/credentials  # Secure the credentials file
 
-#      - name: Configure AWS credentials using aws-actions
-#        uses: aws-actions/configure-aws-credentials@v1
-#        with:
-#          aws-region : ${{ secrets.DEFAULT_AWS_REGION }}
-#          aws-access-key-id: ${{ steps.aws-creds.outputs.aws_access_key_id }}
-#          aws-secret-access-key: ${{ steps.aws-creds.outputs.aws_secret_access_key }}
-#          aws-session-token: ${{ steps.aws-creds.outputs.aws_session_token }}
-
       - name: Install Terraform
         id: install-terraform
         uses: hashicorp/setup-terraform@v3
