@@ -128,7 +128,7 @@ jobs:
                 acls: "off"
               ssh_config: "on"
           debug: false
-          auth_server: ${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443
+          proxy_server: ${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443
           oneshot: true
           fips: false
           outputs:
@@ -144,7 +144,7 @@ jobs:
         run: |
           export TELEPORT_ANONYMOUS_TELEMETRY=1 
           # --certificate-ttl might be changed to --credential-ttl
-          tbot start -c /tmp/bot-config.yaml  --certificate-ttl 60m --renewal-interval 10m
+          tbot start -c /tmp/bot-config.yaml  --certificate-ttl 10m --renewal-interval 5m
 
       - name: Generate AWS Credentials using Workload Identity
         run: |
@@ -169,13 +169,13 @@ jobs:
           echo "aws_session_token = $(jq -r '.SessionToken' /tmp/tbot/aws_creds.json)" >> ~/.aws/credentials
           chmod 600 ~/.aws/credentials  # Secure the credentials file
 
-      - name: Configure AWS credentials using aws-actions
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-region : ${{ secrets.DEFAULT_AWS_REGION }}
-          aws-access-key-id: ${{ steps.aws-creds.outputs.aws_access_key_id }}
-          aws-secret-access-key: ${{ steps.aws-creds.outputs.aws_secret_access_key }}
-          aws-session-token: ${{ steps.aws-creds.outputs.aws_session_token }}
+#      - name: Configure AWS credentials using aws-actions
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-region : ${{ secrets.DEFAULT_AWS_REGION }}
+#          aws-access-key-id: ${{ steps.aws-creds.outputs.aws_access_key_id }}
+#          aws-secret-access-key: ${{ steps.aws-creds.outputs.aws_secret_access_key }}
+#          aws-session-token: ${{ steps.aws-creds.outputs.aws_session_token }}
 
       - name: Install Terraform
         id: install-terraform
