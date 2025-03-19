@@ -69,7 +69,6 @@ jobs:
     name: Deploy Lambda
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/main' # Deploy only on the main branch
     permissions:
       id-token: write
       actions: read
@@ -197,6 +196,7 @@ jobs:
           cd ${{ env.TF_PATH }} && terraform plan --var-file=$GITHUB_WORKSPACE/tf/tfvars/${{ secrets.CI_CD_TFVARS }} -out="${{ env.TF_PLAN_PATH }}"
 
       - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' # Deploy only on the main branch
         id: apply
         run: |
           export TF_VAR_lambda_file_path=${{ env.LAMBDA_ARTIFACT_DIR }}/${{ env.LAMBDA_ZIP_NAME }}
