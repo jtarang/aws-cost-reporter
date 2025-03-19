@@ -1,4 +1,4 @@
-name: ACR CI Pipeline
+name: ACR CI-CD Pipeline
 
 on:
   push: {}
