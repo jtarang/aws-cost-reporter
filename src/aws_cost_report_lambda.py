@@ -1,6 +1,6 @@
 import json
 import os
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import boto3
 import requests
@@ -24,7 +24,7 @@ def handler(event, context):
             return {'statusCode': 400, 'body': json.dumps({'error': 'Invalid JSON body'})}
 
     end_date = datetime.today().date()
-    start_date = end_date - timedelta(days=30)
+    start_date = end_date.replace(day=1)
 
     resource_cost = get_cost_by_tag(ce_client, start_date, end_date, tag_key, tag_value)
 
