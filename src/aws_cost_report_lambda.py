@@ -1,6 +1,6 @@
 import json
 import os
-from datetime import datetime, timedelta, UTC
+from datetime import UTC, datetime, timedelta
 
 import boto3
 import requests
