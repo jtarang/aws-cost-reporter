@@ -1,6 +1,6 @@
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 import boto3
 import requests
@@ -23,8 +23,10 @@ def handler(event, context):
         except json.JSONDecodeError:
             return {'statusCode': 400, 'body': json.dumps({'error': 'Invalid JSON body'})}
 
-    end_date = datetime.today().date()
-    start_date = end_date.replace(day=1)
+    # Set start_date to 1 day before today (yesterday)
+    start_date = (datetime.now(timezone.utc).date() - timedelta(days=1)).strftime("%Y-%m-%d")
+    # Set end_date to today
+    end_date = datetime.now(timezone.utc).date().strftime("%Y-%m-%d")
 
     resource_cost = get_cost_by_tag(ce_client, start_date, end_date, tag_key, tag_value)
 
