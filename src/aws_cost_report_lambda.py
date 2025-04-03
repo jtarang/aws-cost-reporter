@@ -1,10 +1,10 @@
 import json
 import os
 from datetime import UTC, datetime
-from dateutil.relativedelta import relativedelta
 
 import boto3
 import requests
+from dateutil.relativedelta import relativedelta
 
 SLACK_WEBHOOK_URL = os.environ['SLACK_WEBHOOK_URL']
 
