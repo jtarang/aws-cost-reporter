@@ -1,9 +1,10 @@
 import json
 import os
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 
 import boto3
 import requests
+from dateutil.relativedelta import relativedelta
 
 SLACK_WEBHOOK_URL = os.environ['SLACK_WEBHOOK_URL']
 
@@ -23,8 +24,13 @@ def handler(event, context):
         except json.JSONDecodeError:
             return {'statusCode': 400, 'body': json.dumps({'error': 'Invalid JSON body'})}
 
-    # Set start_date to 1 day before today (yesterday)
-    start_date = (datetime.now(UTC).date() - timedelta(days=1)).strftime("%Y-%m-%d")
+
+    # Get today's date in UTC
+    today = datetime.now(UTC).date()
+
+    # Determine start_date
+    start_date = (today - relativedelta(months=1) if today.day == 1 else today.replace(day=1)).strftime("%Y-%m-%d")
+
     # Set end_date to today
     end_date = datetime.now(UTC).date().strftime("%Y-%m-%d")
 
