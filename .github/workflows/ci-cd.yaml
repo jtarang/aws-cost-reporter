@@ -92,6 +92,7 @@ jobs:
           echo "LAMBDA_ARTIFACT_DIR=$GITHUB_WORKSPACE/artifact" >> $GITHUB_ENV
           echo "TF_PATH=$GITHUB_WORKSPACE/tf/" >> $GITHUB_ENV
           echo "TF_PLAN_PATH=$GITHUB_WORKSPACE/tf/plans/$GITHUB_RUN_ID-$GITHUB_SHA.tfplan" >> $GITHUB_ENV
+          echo "TELEPORT_CLUSTER_VERSION=$(curl https://${{ secrets.TELEPORT_CLUSTER_DOMAIN }}/v1/webapi/automaticupgrades/channel/default/version | sed 's/v//')" >> $GITHUB_ENV
 
       - name: Clean up previous artifact directory
         run: rm -rf ${{ env.LAMBDA_ARTIFACT_DIR }} /tmp/tbot /tmp/bot-config.yaml && mkdir -p ${{ env.LAMBDA_ARTIFACT_DIR }} ~/.aws
@@ -105,8 +106,7 @@ jobs:
       - name: Fetch Teleport binaries
         uses: teleport-actions/setup@v1
         with:
-          version: auto
-          proxy: ${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443
+          version: ${{ env.TELEPORT_CLUSTER_VERSION }}
 
       - name: Start Workload Identity Bot
         run: |
