@@ -20,8 +20,8 @@ lambda_runtime = "python3.13"
 ## Slack Webhook URL/ `slack_webhook_url` is a secret
 ## will be grabbed from env variables
 
-cost_target_tag = "teleport.dev/creator"
-cost_target_key = "jasmit.tarang@goteleport.com"
+cost_target_tag = "Environment"
+cost_target_key = "jasmit-cost-tracker-enabled-true"
 api_gateway_stage_name = "prod"
 eventbridge_schedule = "cron(0 15 * * ? *)" # 9 AM CST (UTC Time)
 
