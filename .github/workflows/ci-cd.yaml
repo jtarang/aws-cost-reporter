@@ -130,7 +130,7 @@ jobs:
               ssh_config: "on"
           debug: false
           proxy_server: ${{ secrets.TELEPORT_CLUSTER_DOMAIN }}:443
-          oneshot: true
+          oneshot: false
           fips: false
           outputs:
             - type: workload-identity-x509
