@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import UTC, datetime
+
 import boto3
 import requests
 from dateutil.relativedelta import relativedelta
@@ -65,13 +66,16 @@ def handler(event, context):
         'body': json.dumps({
             'message': 'Cost report sent to Slack!',
             'targets_processed': len(results),
-            'results': [{"tag_key": r["tag_key"], "tag_value": r["tag_value"], "cost": f"${r['cost']:.2f}"} for r in results]
+            'results': [
+                {
+                 "tag_key": r["tag_key"], "tag_value": r["tag_value"], 
+                 "cost": f"${r['cost']:.2f}"} for r in results]
         })
     }
 
 
 def build_slack_message(results, start_date, end_date):
-    lines = [f"*AWS Cost Report*", f"📅 *Time Period:* {start_date} → {end_date}\n"]
+    lines = ["*AWS Cost Report*", f"📅 *Time Period:* {start_date} → {end_date}\n"]
     total = 0.0
     for r in results:
         lines.append(f"🔖 *Tag:* `{r['tag_key']}={r['tag_value']}`")
